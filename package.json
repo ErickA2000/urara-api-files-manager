@@ -1,0 +1,24 @@
+{
+  "name": "api-files-manager",
+  "version": "1.0.0",
+  "description": "microservicio para la gestion de archivos",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ErickA2000/urara-api-files-manager.git"
+  },
+  "keywords": [
+    "api",
+    "service",
+    "firebase"
+  ],
+  "author": "Erick Arevalo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ErickA2000/urara-api-files-manager/issues"
+  },
+  "homepage": "https://github.com/ErickA2000/urara-api-files-manager#readme"
+}
