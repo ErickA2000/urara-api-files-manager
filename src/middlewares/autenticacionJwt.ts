@@ -70,12 +70,14 @@ export const isModerador = async ( req: Request, res: Response, next: NextFuncti
 export const isAdminOrModerador = async ( req: Request, res: Response, next: NextFunction ) => {
     const user = await usuarioDao.getOneById( req.userId );
     
-    for( let rol of user.roles ){
-        if(rol.nombre === "admin" || rol.nombre === "moderador" ){
-            next();
-            return;
-        }
-    }
+    console.log(user)
+
+    // for( let rol of user.roles ){
+    //     if(rol.nombre === "admin" || rol.nombre === "moderador" ){
+    //         next();
+    //         return;
+    //     }
+    // }
 
     res.status(CODES_HTTP.FORBIDDEN).json({ 
         success: false,
