@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken';
 import { usuarioDao } from '@DAO/Usuario.dao';
 import { CODES_HTTP } from '@Constants/global';
+import Roles from '@Models/Roles';
 
 interface IPayload {
     _id: string;
@@ -9,8 +10,10 @@ interface IPayload {
     exp: number;
 }
 
-export const TokenValidation = (req: Request, res: Response, next: NextFunction) => {
+export const TokenValidation = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        await Roles.find();
+        
         const token = req.header('token');
         if( !token ) return res.status(CODES_HTTP.UNAUTHORIZED).json({
             success: false,
@@ -36,51 +39,79 @@ export const TokenValidation = (req: Request, res: Response, next: NextFunction)
 }
 
 export const isAdmin = async ( req: Request, res: Response, next: NextFunction ) => {
-    const user = await usuarioDao.getOneById( req.userId );
     
-    for( let rol of user.roles ){
-        if(rol.nombre === "admin"){
-            next();
-            return;
+    try {
+        
+        const user = await usuarioDao.getOneById( req.userId );
+        
+        for( let rol of user.roles ){
+            if(rol.nombre === "admin"){
+                next();
+                return;
+            }
         }
+    
+        res.status(CODES_HTTP.FORBIDDEN).json({ 
+            success: false,
+            message: "Requiere rol admin" 
+        });
+    } catch (error) {
+        return res.status(CODES_HTTP.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: "Error: " + error 
+        }) 
     }
 
-    res.status(CODES_HTTP.FORBIDDEN).json({ 
-        success: false,
-        message: "Requiere rol admin" 
-    });
 }
 
 export const isModerador = async ( req: Request, res: Response, next: NextFunction ) => {
-    const user = await usuarioDao.getOneById( req.userId );
-
-    for( let rol of user.roles ){
-        if(rol.nombre === "moderador"){
-            next();
-            return;
+    
+    try {
+        
+        const user = await usuarioDao.getOneById( req.userId );
+    
+        for( let rol of user.roles ){
+            if(rol.nombre === "moderador"){
+                next();
+                return;
+            }
         }
+    
+        res.status(CODES_HTTP.FORBIDDEN).json({ 
+            success: false,
+            message: "Requiere rol moderador" 
+        });
+    } catch (error) {
+        return res.status(CODES_HTTP.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: "Error: " + error 
+        })
     }
-
-    res.status(CODES_HTTP.FORBIDDEN).json({ 
-        success: false,
-        message: "Requiere rol moderador" 
-    });
 }
 
 export const isAdminOrModerador = async ( req: Request, res: Response, next: NextFunction ) => {
-    const user = await usuarioDao.getOneById( req.userId );
     
-    console.log(user)
+    try {
+        
+        const user = await usuarioDao.getOneById( req.userId );
+        
+    
+        for( let rol of user.roles ){
+            if(rol.nombre === "admin" || rol.nombre === "moderador" ){
+                next();
+                return;
+            }
+        }
+    
+        res.status(CODES_HTTP.FORBIDDEN).json({ 
+            success: false,
+            message: "Requiere rol admin o moderador" 
+        });
+    } catch (error) {
+        return res.status(CODES_HTTP.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: "Error: " + error 
+        })
+    }
 
-    // for( let rol of user.roles ){
-    //     if(rol.nombre === "admin" || rol.nombre === "moderador" ){
-    //         next();
-    //         return;
-    //     }
-    // }
-
-    res.status(CODES_HTTP.FORBIDDEN).json({ 
-        success: false,
-        message: "Requiere rol admin o moderador" 
-    });
 }
