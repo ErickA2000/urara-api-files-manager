@@ -1,3 +1,5 @@
+[Spanish](README-es.md)
+
 # FILE MANAGER SERVICE FOR URARA
 
 This project is developed with typescript and then transpiled to javascript.    
